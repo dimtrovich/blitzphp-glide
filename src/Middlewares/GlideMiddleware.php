@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of dimtrovich/blitzphp-glide".
+ *
+ * (c) 2025 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Dimtrovich\BlitzPHP\Glide\Middlewares;
 
 use BlitzPHP\Http\Request;
@@ -35,7 +44,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
         'cache_time' => '+1 days',
         'security'   => [
             'secure' => false,
-            'key' => null,
+            'key'    => null,
         ],
         'headers'        => [],
         'allowed_params' => ['w', 'h', 'fit', 'border', 'blur', 'q', 'fm', 's', 'a', 'dpr', 'bg', 'mark', 'markw', 'markh', 'markx', 'marky', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky', 'markw', 'markh', 'markpad', 'markpos', 'markalpha', 'markfit', 'markbg', 'markpos', 'markx', 'marky'],
@@ -50,7 +59,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
     {
         $this->config = Arr::merge($this->defaultConfig, config('glide', []));
         /** @var Response */
-        $response     = parent::process($request, $handler);
+        $response = parent::process($request, $handler);
 
         if (null === $this->disk || '' === $this->path) {
             return $this->parentResponse($request, $response);
@@ -61,15 +70,15 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
         if (! $request->hasAny($this->config('allowed_params'))) {
             return $this->parentResponse($request, $response, $path);
         }
-        
-        if (isset($this->config['path']) && strpos($this->path, $this->config['path'] ?? '') !== 0) {
+
+        if (isset($this->config['path']) && ! str_starts_with($this->path, $this->config['path'] ?? '')) {
             return $this->parentResponse($request, $response);
         }
-        
+
         $this->checkSignature($request);
-        
-        $server = $this->getServer();        
-        
+
+        $server = $this->getServer();
+
         $modifiedTime = null;
         if ($this->config('cache_time')) {
             if (null === $return = $this->checkModified($request, $server)) {
@@ -79,7 +88,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
             if ($return instanceof ResponseInterface) {
                 return $return;
             }
-            
+
             $modifiedTime = $return;
         }
 
@@ -88,12 +97,10 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
         }
 
         if (null !== $cacheTime = $this->config('cache_time')) {
-            $response = $this->withCacheHeaders($response, $cacheTime, $modifiedTime,);
+            $response = $this->withCacheHeaders($response, $cacheTime, $modifiedTime);
         }
 
-        $response = $this->withCustomHeaders($response);
-
-        return $response;
+        return $this->withCustomHeaders($response);
     }
 
     /**
@@ -107,7 +114,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
         }
 
         return ServerFactory::create([
-            'response'          => new ResponseFactory,
+            'response'          => new ResponseFactory(),
             'source'            => $this->disk->getDriver(),
             'cache'             => $this->disk->getDriver(),
             'cache_path_prefix' => '.cache',
@@ -127,6 +134,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
         }
 
         $key = $this->config('security.key') ?: config('encryption.key');
+
         try {
             SignatureFactory::create($key)->validateRequest(
                 $this->path,
@@ -143,7 +151,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
      * After comparing with "If-Modified-Since" either return modified time or
      * response with 304 Not Modified status.
      *
-     * @return \Psr\Http\Message\ResponseInterface|int|null
+     * @return int|ResponseInterface|null
      */
     protected function checkModified(ServerRequestInterface $request, Server $server)
     {
@@ -218,7 +226,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
     /**
      * Compare file's modfied time with "If-Modified-Since" header.
      */
-    protected function isNotModified(ServerRequestInterface $request, string|int $modifiedTime): bool
+    protected function isNotModified(ServerRequestInterface $request, int|string $modifiedTime): bool
     {
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');
         if (! $modifiedSince) {
@@ -231,7 +239,8 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
     /**
      * Return response instance with caching headers.
      */
-    protected function withCacheHeaders(ResponseInterface $response, string $cacheTime, string|int $modifiedTime): ResponseInterface {
+    protected function withCacheHeaders(ResponseInterface $response, string $cacheTime, int|string $modifiedTime): ResponseInterface
+    {
         /** @var int $expire */
         $expire = strtotime($cacheTime);
         $maxAge = $expire - time();
@@ -283,7 +292,7 @@ class GlideMiddleware extends FileViewer implements MiddlewareInterface
         $response ??= $this->response;
 
         if (null === $this->disk || null === $path || ! $response instanceof Response) {
-            return $response; 
+            return $response;
         }
 
         if ($request->boolean('download')) {

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of dimtrovich/blitzphp-glide".
+ *
+ * (c) 2025 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Dimtrovich\BlitzPHP\Glide\Response;
 
 use BlitzPHP\Http\Response;
@@ -27,9 +36,9 @@ class ResponseFactory implements ResponseFactoryInterface
 
         $contentType   = $cache->mimeType($path);
         $contentLength = $cache->fileSize($path);
-        
+
         return (new Response())->withBody($stream)
             ->withHeader('Content-Type', $contentType)
-            ->withHeader('Content-Length', (string)$contentLength);
+            ->withHeader('Content-Length', (string) $contentLength);
     }
 }
