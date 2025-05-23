@@ -1,40 +1,55 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "dimtrovich/blitzphp-glide",
+    "description": "Adaptateur Glide pour BlitzPHP",
     "keywords": [
-        ":vendor_name",
-        ":package_slug"
+        "dimtrovich",
+        "blitzphp-glide",
+        "blitzphp",
+        "glide"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/dimtrovich/blitzphp-glide",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Dimitri Sitchet Tomkeu",
+            "email": "devcode.dst@gmail.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "league/glide": "^3.0"
     },
     "require-dev": {
-        :require_dev_testing,
-        :require_dev_codestyle,
-		"phpstan/phpstan": "^2.1"
+        "blitz-php/coding-standard": "^1.4",
+        "blitz-php/framework": "^0.12.0",
+        "kahlan/kahlan": "^6.0",
+        "phpstan/phpstan": "^1.11"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src"
+            "Dimtrovich\\BlitzPHP\\Glide\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Spec\\": "spec"
+            "Dimtrovich\\BlitzPHP\\Glide\\Spec\\": "spec"
         }
     },
     "scripts": {
-        :scripts_testing,
-        :scripts_codestyle,
+        "test": "vendor/bin/kahlan",
+		"test:cov": [
+			"Composer\\Config::disableProcessTimeout",
+			"vendor/bin/kahlan --coverage=4 --reporter=verbose --clover=clover.xml"
+		],
+		"cs": [
+            "Composer\\Config::disableProcessTimeout",
+            "php-cs-fixer check --ansi --verbose --diff"
+        ],
+        "cs:fix": [
+			"Composer\\Config::disableProcessTimeout",
+			"vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes"
+		],
 		"phpstan:baseline": [
             "Composer\\Config::disableProcessTimeout",
             "bash -c \"XDEBUG_MODE=off phpstan analyse --ansi --generate-baseline phpstan-baseline.php\""
@@ -54,7 +69,6 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            :plugins_testing,
             "phpstan/extension-installer": true
         }
     },

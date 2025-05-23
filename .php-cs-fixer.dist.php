@@ -30,8 +30,8 @@ $options = [
 ];
 
 return Factory::create(new Blitz(), $overrides, $options)->forLibrary(
-    ':vendor_slug/:package_slug"',
-    ':author_name',
-    'author@domain.com',
+    'dimtrovich/blitzphp-glide"',
+    'Dimitri Sitchet Tomkeu',
+    'devcode.dst@gmail.com',
     date('Y')
 );
